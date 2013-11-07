@@ -35,6 +35,8 @@ class AudioRecord : public RefBase
 {
 public:
 
+    static const int DEFAULT_SAMPLE_RATE = 8000;
+
     /* Events used by AudioRecord callback function (callback_t).
      * Keep in sync with frameworks/base/media/java/android/media/AudioRecord.java NATIVE_EVENT_*.
      */
@@ -210,8 +212,8 @@ public:
             audio_format_t format() const   { return mFormat; }
             uint32_t    channelCount() const    { return mChannelCount; }
             size_t      frameCount() const  { return mFrameCount; }
-            size_t      frameSize() const   { return mFrameSize; }
-            audio_source_t inputSource() const  { return mInputSource; }
+            size_t      frameSize() const;
+            audio_source_t inputSource() const;
 
     /* After it's created the track is not active. Call start() to
      * make it active. If set, the callback will start being called.

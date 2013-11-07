@@ -100,6 +100,8 @@ struct OMXCodec : public MediaSource,
         kSupportsMultipleFramesPerInputBuffer = 1024,
         kRequiresLargerEncoderOutputBuffer    = 2048,
         kOutputBuffersAreUnreadable           = 4096,
+        kRequiresGlobalFlush                  = 0x20000000, // 2^29
+        kRequiresWMAProComponent              = 0x40000000, //2^30
     };
 
     struct CodecNameAndQuirks {
@@ -139,10 +141,14 @@ private:
         EXECUTING_TO_IDLE,
         IDLE_TO_LOADED,
         RECONFIGURING,
+        PAUSING,
+        FLUSHING,
+        PAUSED,
         ERROR
     };
 
     enum {
+        kPortIndexBoth   = -1,
         kPortIndexInput  = 0,
         kPortIndexOutput = 1
     };
@@ -255,7 +261,7 @@ private:
             OMX_VIDEO_CODINGTYPE compressionFormat,
             OMX_COLOR_FORMATTYPE colorFormat);
 
-    void setVideoInputFormat(
+    status_t setVideoInputFormat(
             const char *mime, const sp<MetaData>& meta);
 
     status_t setupBitRate(int32_t bitRate);
@@ -358,6 +364,9 @@ private:
 
     OMXCodec(const OMXCodec &);
     OMXCodec &operator=(const OMXCodec &);
+
+    int32_t mNumBFrames;
+    bool mInSmoothStreamingMode;
 };
 
 struct CodecCapabilities {
