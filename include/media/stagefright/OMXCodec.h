@@ -100,8 +100,9 @@ struct OMXCodec : public MediaSource,
         kSupportsMultipleFramesPerInputBuffer = 1024,
         kRequiresLargerEncoderOutputBuffer    = 2048,
         kOutputBuffersAreUnreadable           = 4096,
-        kRequiresGlobalFlush                  = 0x20000000, // 2^29
-        kRequiresWMAProComponent              = 0x40000000, //2^30
+#if defined(OMAP_ENHANCEMENT)
+        kAvoidMemcopyInputRecordingFrames     = 0x20000000,
+#endif
     };
 
     struct CodecNameAndQuirks {
@@ -141,14 +142,10 @@ private:
         EXECUTING_TO_IDLE,
         IDLE_TO_LOADED,
         RECONFIGURING,
-        PAUSING,
-        FLUSHING,
-        PAUSED,
         ERROR
     };
 
     enum {
-        kPortIndexBoth   = -1,
         kPortIndexInput  = 0,
         kPortIndexOutput = 1
     };
@@ -297,6 +294,9 @@ private:
 
     status_t allocateBuffers();
     status_t allocateBuffersOnPort(OMX_U32 portIndex);
+#ifdef USE_SAMSUNG_COLORFORMAT
+    void setNativeWindowColorFormat(OMX_COLOR_FORMATTYPE &eNativeColorFormat);
+#endif
     status_t allocateOutputBuffersFromNativeWindow();
 
     status_t queueBufferToNativeWindow(BufferInfo *info);
@@ -350,6 +350,9 @@ private:
     void dumpPortStatus(OMX_U32 portIndex);
 
     status_t configureCodec(const sp<MetaData> &meta);
+#if defined(OMAP_ENHANCEMENT)
+    void restorePatchedDataPointer(BufferInfo *info);
+#endif
 
     status_t applyRotation();
     status_t waitForBufferFilled_l();
@@ -364,9 +367,6 @@ private:
 
     OMXCodec(const OMXCodec &);
     OMXCodec &operator=(const OMXCodec &);
-
-    int32_t mNumBFrames;
-    bool mInSmoothStreamingMode;
 };
 
 struct CodecCapabilities {

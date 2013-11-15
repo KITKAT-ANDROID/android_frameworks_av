@@ -117,6 +117,7 @@ public:
     void setPictureSize(int width, int height);
     void getPictureSize(int *width, int *height) const;
     void getSupportedPictureSizes(Vector<Size> &sizes) const;
+    void set3DFileFormat(const char* buffer);
     void setPictureFormat(const char *format);
     const char *getPictureFormat() const;
 #ifdef QCOM_HARDWARE
@@ -182,6 +183,20 @@ public:
     static const char KEY_SUPPORTED_PREVIEW_FRAME_RATE_MODES[];
     static const char KEY_PREVIEW_FRAME_RATE_AUTO_MODE[];
     static const char KEY_PREVIEW_FRAME_RATE_FIXED_MODE[];
+#ifdef QCOM_LEGACY_CAM_PARAMS
+    static const char KEY_CAPTURE_MODE[];
+    static const char KEY_SUPPORTED_CAPTURE_MODES[];
+    static const char KEY_PICTURE_COUNT[];
+    static const char KEY_MAX_BURST_PICTURE_COUNT[];
+    static const char KEY_SUPPORTED_CONTINUOUS_AF[];
+    static const char KEY_SUPPORTED_CAF[];
+    static const char CAPTURE_MODE_NORMAL[];
+    static const char CAPTURE_MODE_BURST[];
+    static const char CAPTURE_MODE_CONTI_BURST[];
+    static const char CAPTURE_MODE_HDR[];
+    static const char CAPTURE_MODE_HJR[];
+    static const char CAPTURE_MODE_PANORAMA[];
+#endif
 #endif
     // The dimensions for captured pictures in pixels (width x height).
     // Example value: "1024x768". Read/write.
@@ -189,6 +204,8 @@ public:
     // Supported dimensions for captured pictures in pixels.
     // Example value: "2048x1536,1024x768". Read only.
     static const char KEY_SUPPORTED_PICTURE_SIZES[];
+    //HTC 3D color format
+    static const char KEY_SUPPORTED_3D_FILE_FORMAT[];
     // The image format for captured pictures. See CAMERA_MSG_COMPRESSED_IMAGE
     // in frameworks/base/include/camera/Camera.h.
     // Example value: "jpeg" or PIXEL_FORMAT_XXX constants. Read/write.
@@ -658,8 +675,11 @@ public:
     static const char KEY_CONTI_BURST_STATE[];
     static const char KEY_SUPPORTED_CAPTURE_MODES[];
     static const char KEY_MIN_CONTRAST[];
+    static const char KEY_DEF_CONTRAST[];
     static const char KEY_MIN_SHARPNESS[];
+    static const char KEY_DEF_SHARPNESS[];
     static const char KEY_MIN_SATURATION[];
+    static const char KEY_DEF_SATURATION[];
     static const char KEY_SINGLE_ISP_OUTPUT_ENABLED[];
     static const char POST_PROCESSING_ENABLE[];
     static const char POST_PROCESSING_BYPASS[];
@@ -680,6 +700,29 @@ public:
     static const char KEY_GPU_EFFECT_PARAM_2[];
     static const char KEY_GPU_EFFECT_PARAM_3[];
     static const char KEY_FORCE_USE_AUDIO_ENABLED[];
+#endif
+
+#ifdef LG_CAMERA_HARDWARE
+    static const char AUDIO_ZOOM_OFF[];
+    static const char AUDIO_ZOOM_ON[];
+    static const char BEAUTY_SHOT_OFF[];
+    static const char BEAUTY_SHOT_ON[];
+    static const char BURST_SHOT_OFF[];
+    static const char BURST_SHOT_ON[];
+    static const char KEY_AUDIO_ZOOM[];
+    static const char KEY_AUDIO_ZOOM_SUPPORTED[];
+    static const char KEY_BEAUTY_SHOT[];
+    static const char KEY_BEAUTY_SHOT_SUPPORTED[];
+    static const char KEY_BURST_SHOT[];
+    static const char KEY_BURST_SHOT_SUPPORTED[];
+    static const char KEY_FOCUS_MODE_OBJECT_TRACKING[];
+    static const char KEY_FOCUS_MODE_OBJECT_TRACKING_SUPPORTED[];
+    static const char KEY_VIDEO_WDR[];
+    static const char KEY_VIDEO_WDR_SUPPORTED[];
+    static const char VIDEO_WDR_OFF[];
+    static const char VIDEO_WDR_ON[];
+    static const char OBJECT_TRACKING_ON[];
+    static const char OBJECT_TRACKING_OFF[];
 #endif
 
     static const char KEY_AE_BRACKET_HDR[];
@@ -729,6 +772,15 @@ public:
     static const char EFFECT_WHITEBOARD[];
     static const char EFFECT_BLACKBOARD[];
     static const char EFFECT_AQUA[];
+#ifdef SAMSUNG_CAMERA_HARDWARE
+    static const char EFFECT_CARTOONIZE[];
+    static const char EFFECT_POINT_RED_YELLOW[];
+    static const char EFFECT_POINT_GREEN[];
+    static const char EFFECT_POINT_BLUE[];
+    static const char EFFECT_VINTAGE_COLD[];
+    static const char EFFECT_VINTAGE_WARM[];
+    static const char EFFECT_WASHED[];
+#endif
 #ifdef QCOM_HARDWARE
     static const char EFFECT_EMBOSS[];
     static const char EFFECT_SKETCH[];
@@ -877,6 +929,22 @@ public:
     static const char LIGHTFX_HDR[];
 
 #ifdef QCOM_HARDWARE
+#ifdef QCOM_LEGACY_CAM_PARAMS
+    static const char FOCUS_MODE_CONTINUOUS_CAMERA[];
+
+    // Values for Continuous AF
+    static const char CAF_OFF[] ;
+    static const char CAF_ON[] ;
+    // Proprietaries from CodeAurora use these...
+    static const char CONTINUOUS_AF_OFF[] ;
+    static const char CONTINUOUS_AF_ON[] ;
+    static const char KEY_CONTINUOUS_AF[] ;
+    static const char KEY_CAF[] ;
+    static const char KEY_TAKING_PICTURE_ZOOM[];
+    static const char KEY_PANORAMA_MODE[];
+    static const char PANORAMA_MODE_NOT_INPROGRESS[];
+    static const char PANORAMA_MODE_INPROGRESS[];
+#endif
     // Normal focus mode. Applications should call
     // CameraHardwareInterface.autoFocus to start the focus in this mode.
     static const char FOCUS_MODE_NORMAL[];
@@ -900,10 +968,19 @@ public:
 
     static const char KEY_SHARPNESS[];
     static const char KEY_MAX_SHARPNESS[];
+#ifdef QCOM_LEGACY_CAM_PARAMS
+    static const char KEY_MIN_SHARPNESS[];
+#endif
     static const char KEY_CONTRAST[];
     static const char KEY_MAX_CONTRAST[];
+#ifdef QCOM_LEGACY_CAM_PARAMS
+    static const char KEY_MIN_CONTRAST[];
+#endif
     static const char KEY_SATURATION[];
     static const char KEY_MAX_SATURATION[];
+#ifdef QCOM_LEGACY_CAM_PARAMS
+    static const char KEY_MIN_SATURATION[];
+#endif
 
     static const char KEY_HISTOGRAM[] ;
     static const char KEY_SUPPORTED_HISTOGRAM_MODES[] ;
@@ -928,6 +1005,10 @@ public:
     // Values for Face Detection settings.
     static const char FACE_DETECTION_OFF[];
     static const char FACE_DETECTION_ON[];
+
+    // Values for HTC 3D image settings.
+    static const char FILE_FORMAT_MPO[];
+    static const char FILE_FORMAT_JPS[];
 
     // Values for MCE settings.
     static const char MCE_ENABLE[];
@@ -996,6 +1077,9 @@ public:
     int getOrientation() const;
     void setOrientation(int orientation);
     void setPreviewFpsRange(int minFPS,int maxFPS);
+#ifdef QCOM_LEGACY_CAM_PARAMS
+    void setPostviewSize(int x, int y);
+#endif
     void getSupportedHfrSizes(Vector<Size> &sizes) const;
 #endif
 

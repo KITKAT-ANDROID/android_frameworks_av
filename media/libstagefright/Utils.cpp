@@ -32,9 +32,8 @@
 #include <hardware/audio.h>
 #include <media/stagefright/Utils.h>
 #include <media/AudioParameter.h>
-#include <media/stagefright/ExtendedCodec.h>
 
-#ifdef ENABLE_AV_ENHANCEMENTS
+#ifdef ENABLE_QC_AV_ENHANCEMENTS
 #include "QCMetaData.h"
 #endif
 
@@ -134,7 +133,7 @@ status_t convertMetaDataToMessage(
             msg->setInt32("is-adts", true);
         }
 
-#ifdef ENABLE_AV_ENHANCEMENTS
+#ifdef ENABLE_QC_AV_ENHANCEMENTS
         uint32_t type;
         const void *data;
         size_t size;
@@ -282,7 +281,6 @@ status_t convertMetaDataToMessage(
         msg->setBuffer("csd-1", buffer);
     }
 
-    ExtendedCodec::convertMetaDataToMessage(meta, &msg);
     *format = msg;
 
     return OK;

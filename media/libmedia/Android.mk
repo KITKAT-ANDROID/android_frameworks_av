@@ -11,22 +11,11 @@ include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 
-LOCAL_SRC_FILES:= AudioParameter.cpp
-LOCAL_MODULE:= libaudioparameter
-LOCAL_MODULE_TAGS := optional
-LOCAL_SHARED_LIBRARIES := libutils libcutils
-
-include $(BUILD_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-
 LOCAL_SRC_FILES:= \
     AudioTrack.cpp \
     AudioTrackShared.cpp \
     IAudioFlinger.cpp \
     IAudioFlingerClient.cpp \
-    IDirectTrack.cpp \
-    IDirectTrackClient.cpp \
     IAudioTrack.cpp \
     IAudioRecord.cpp \
     ICrypto.cpp \
@@ -68,6 +57,15 @@ LOCAL_SRC_FILES:= \
     StringArray.cpp
 
 LOCAL_SRC_FILES += ../libnbaio/roundup.c
+
+ifeq ($(BOARD_USES_LIBMEDIA_WITH_AUDIOPARAMETER),true)
+LOCAL_SRC_FILES+= \
+    AudioParameter.cpp
+endif
+
+ifeq ($(BOARD_USE_SAMSUNG_SEPARATEDSTREAM),true)
+LOCAL_CFLAGS += -DUSE_SAMSUNG_SEPARATEDSTREAM
+endif
 
 # for <cutils/atomic-inline.h>
 LOCAL_CFLAGS += -DANDROID_SMP=$(if $(findstring true,$(TARGET_CPU_SMP)),1,0)
